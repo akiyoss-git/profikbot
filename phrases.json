@@ -1,0 +1,166 @@
+{
+    "start": {
+        "start": "Начать",
+        "to_start": "В начало",
+        "anotherq": "У меня есть еще вопросы"
+    },
+    "hellomk":{
+        "matpom": "Материальная помощь",
+        "obsh": "Общежития",
+        "money": "Стипендия",
+        "inst": "Вопрос по институту",
+        "tonntu": "Поступление в НГТУ",
+        "exchangeintonntu": "Перевод из других университетов",
+        "exchangeonnntu": "Перевод внутри НГТУ",
+        "active": "Хочу быть активистом!",
+        "iwanttoprof": "Вступить в профсоюз",
+        "partnership": "Партнерство"
+    },
+    "obsh":{
+        "zasel": "Как заселится в общежитие?",
+        "dush": "Почему душ не работает в понедельник?",
+        "raspis": "Какое у общежития расписание?",
+        "room": "Как переселится в другую комнату?"
+    },
+    "obshansw":{
+        "zasel": "Приходишь и залеляешься ты че тупой",
+        "dush": "Потому что вода еще не приехала из Заволжья, у нее пары во вторник начинаются",
+        "raspis": "7 утра подьем, 8 утра идем в шарагу, 10 утра пьем пиво",
+        "room": "Никак, страдай."
+    },
+    "money":{
+        "when": "Когда придет стипендия?",
+        "wait": "Почему стипендия задерживается?",
+        "how_much": "Почему мне пришло именно столько?"
+    },
+    "moneyansw":{
+        "when": "Не позднее 25 числа каждого месяца",
+        "wait": "Еще не 25 число, подожди немного",
+        "wait25": "Сегодня в течение дня придет",
+        "wait_after": "Информация уже в группе",
+        "how_much": "Необходимо больше информации, с тобой свяжется председатель комиссии общественного контроля ",
+        "how_much2": " и поможет разобратся в ситуации"
+    },
+    "ans":{
+        "matpom": "Короче, читай этот пост и все узнаешь: https://vk.com/profkomngtu?w=wall-27489655_4591",
+        "tonntu": "Короче приезжаешь в политех, идешь в нужную тебе дирекцию, там все расскажут. Возьми с собой паспорт и еще какие то бумажки",
+        "exchangeintonntu": "Иди в деканат с зачеткой и говори. ХОЧУ УЧИТСЯ В ПОЛИТЕХЕ ЛОБАЧ ГОВНО",
+        "exchangeonnntu":  "Иди в дирекцию и говори что ты не хочешь быть тут хочу быть на физтехе. Тебя примут за душевнобольного и переведут",
+        "obsh": "Что именно тебя интересует?",
+        "iwanttoprof":"Для вступления тебе надо заполнить 2 заявления и принести в 1206"
+    },
+    "qai":{
+        "irit":{
+            "questions":{
+                "top1": "top 1 q irit",
+                "top2": "top 2 q irit",
+                "top3": "top 3 q irit",
+                "top4": "top 4 q irit",
+                "top5": "top 5 q irit"
+            },
+            "answers":{
+                "top1": "top 1 a irit",
+                "top2": "top 2 a irit",
+                "top3": "top 3 a irit",
+                "top4": "top 4 a irit",
+                "top5": "top 5 a irit"
+            }
+        },
+        "its":{
+            "questions":{
+                "top1": "top 1 q its",
+                "top2": "top 2 q its",
+                "top3": "top 3 q its",
+                "top4": "top 4 q its",
+                "top5": "top 5 q its"
+            },
+            "answers":{
+                "top1": "top 1 a its",
+                "top2": "top 2 a its",
+                "top3": "top 3 a its",
+                "top4": "top 4 a its",
+                "top5": "top 5 a its"
+            }
+        },
+        "iptm":{
+            "questions":{
+                "top1": "1 q iptm",
+                "top2": "2 q iptm",
+                "top3": "3 q iptm",
+                "top4": "4 q iptm",
+                "top5": "5 q iptm"
+            },
+            "answers":{
+                "top1": "1 a iptm",
+                "top2": "2 a iptm",
+                "top3": "3 a iptm",
+                "top4": "4 a iptm",
+                "top5": "5 a iptm"
+            }
+        },
+        "iyaeitf":{
+            "questions":{
+                "top1": "1 q iyaeitf",
+                "top2": "2 q iyaeitf",
+                "top3": "3 q iyaeitf",
+                "top4": "4 q iyaeitf",
+                "top5": "5 q iyaeitf"
+            },
+            "answers":{
+                "top1": "1 a iyaeitf",
+                "top2": "2 a iyaeitf",
+                "top3": "3 a iyaeitf",
+                "top4": "4 a iyaeitf",
+                "top5": "5 a iyaeitf"
+            }
+        },
+        "ifhtim":{
+            "questions":{
+                "top1": "1 q ifhtim",
+                "top2": "2 q ifhtim",
+                "top3": "3 q ifhtim",
+                "top4": "4 q ifhtim",
+                "top5": "5 q ifhtim"
+            },
+            "answers":{
+                "top1": "1 a ifhtim",
+                "top2": "2 a ifhtim",
+                "top3": "3 a ifhtim",
+                "top4": "4 a ifhtim",
+                "top5": "5 a ifhtim"
+            }
+        },
+        "inel":{
+            "questions":{
+                "top1": "1 q inel",
+                "top2": "2 q inel",
+                "top3": "3 q inel",
+                "top4": "4 q inel",
+                "top5": "5 q inel"
+            },
+            "answers":{
+                "top1": "1 a inel",
+                "top2": "2 a inel",
+                "top3": "3 a inel",
+                "top4": "4 a inel",
+                "top5": "5 a inel"
+            }
+        },
+        "ineu":{
+            "questions":{
+                "top1": "1 q ineu",
+                "top2": "2 q ineu",
+                "top3": "3 q ineu",
+                "top4": "4 q ineu",
+                "top5": "5 q ineu"
+            },
+            "answers":{
+                "top1": "1 a ineu",
+                "top2": "2 a ineu",
+                "top3": "3 a ineu",
+                "top4": "4 a ineu",
+                "top5": "5 a ineu"
+            }
+        }
+    }
+}
