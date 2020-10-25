@@ -109,75 +109,97 @@ bot.command(phrase.money.wait, async (ctx) => {
       })
     })   
 
-bot.command(phrase.obsh.zasel, async (ctx) => {
-      await ctx.reply(phrase.obshansw.zasel, null, Markup
-      .keyboard([
-        [
-          Markup.button(phrase.start.anotherq, 'positive'),
-        ]
-      ])
-      .oneTime(true))
-    })    
-bot.command(phrase.hellomk.obsh, async (ctx) => {
-      await ctx.reply(phrase.ans.obsh, null, Markup
-      .keyboard([
-        [
-          Markup.button(phrase.obsh.dush, 'positive'),
-        ],
-        [
-          Markup.button(phrase.obsh.raspis, 'positive'),
-        ],
-        [
-          Markup.button(phrase.obsh.room, 'positive'),
-        ],
-        [
-          Markup.button(phrase.obsh.zasel, 'positive'),
-        ],
-        [
-          Markup.button(phrase.start.anotherq, 'positive'),
-        ]
-      ])
-      .oneTime(true))
-    })
-
-bot.command(phrase.obshansw.zasel, async (ctx) => {
-      await ctx.reply(phrase.obshansw.zasel, null, Markup
-      .keyboard([
-        [
-          Markup.button(phrase.start.anotherq, 'positive'),
-        ]
-      ])
-      .oneTime(true))
-    })
-
-bot.command(phrase.obsh.dush, async (ctx) => {
-      await ctx.reply(phrase.obshansw.dush, null, Markup
-      .keyboard([
-        [
-          Markup.button(phrase.start.anotherq, 'positive'),
-        ]
-      ])
-      .oneTime(true))
-    })
-
-bot.command(phrase.obsh.raspis, async (ctx) => {
-      await ctx.reply(phrase.obshansw.raspis, null, Markup
-      .keyboard([
-        [
-          Markup.button(phrase.start.anotherq, 'positive'),
-        ]
-      ])
-      .oneTime(true))
-    })
-
-bot.command(phrase.obsh.room, async (ctx) => {
-      await ctx.reply(phrase.obshansw.room, null, Markup
-      .keyboard([
-        [
-          Markup.button(phrase.start.anotherq, 'positive'),
-        ]
-      ])
-      .oneTime(true))
+    const hostel = new Scene('hostel', 
+    async (ctx)=>{
+        ctx.scene.next();
+        await ctx.reply(phrase.ans.obsh, null, Markup
+            .keyboard([
+              [
+                Markup.button(phrase.obsh.dush, 'positive'),
+                Markup.button(phrase.obsh.raspis, 'positive'),
+              ],
+              [
+                Markup.button(phrase.obsh.room, 'positive'),
+                Markup.button(phrase.obsh.zasel, 'positive'),
+              ],
+              [
+                Markup.button('Иной вопрос', 'positive')
+              ],
+              [
+                Markup.button(phrase.start.to_start, 'positive'),
+              ]
+            ])
+            .oneTime(true))
+    },
+    async (ctx)=>{
+        switch(ctx.message.text){
+            case phrase.obsh.zasel:{
+                await ctx.reply(phrase.obshansw.zasel, null, Markup
+                    .keyboard([
+                      [
+                        Markup.button(phrase.start.anotherq, 'positive'),
+                      ]
+                    ])
+                    .oneTime(true))
+                ctx.scene.leave();
+                break;
+            }
+            case phrase.obsh.dush:{
+                await ctx.reply(phrase.obshansw.dush, null, Markup
+                    .keyboard([
+                      [
+                        Markup.button(phrase.start.anotherq, 'positive'),
+                      ]
+                    ])
+                    .oneTime(true))
+                ctx.scene.leave();
+                break;
+            }
+            case phrase.obsh.raspis:{
+                await ctx.reply(phrase.obshansw.raspis, null, Markup
+                    .keyboard([
+                      [
+                        Markup.button(phrase.start.anotherq, 'positive'),
+                      ]
+                    ])
+                    .oneTime(true))
+                ctx.scene.leave();
+                break;
+            }
+            case phrase.obsh.room:{
+                await ctx.reply(phrase.obshansw.room, null, Markup
+                    .keyboard([
+                      [
+                        Markup.button(phrase.start.anotherq, 'positive'),
+                      ]
+                    ])
+                    .oneTime(true))
+                ctx.scene.leave();
+                break;
+            }
+            case 'Иной вопрос':{
+                await ctx.reply('Напишите свой вопрос', null)
+                ctx.scene.next();
+                break;
+            }
+            default:
+                {
+                    ctx.scene.leave();
+                    break;
+                }
+        }
+    },
+    async (ctx)=>{
+        ctx.reply('Для решения этого вопроса с тобой свяжется председатель жилищно-бытовой комиссии '+db.leaders.zhbk.name, null, Markup
+        .keyboard([
+          [
+            Markup.button(phrase.start.anotherq, 'positive'),
+          ]
+        ])
+        .oneTime(true)).then(()=>{
+            bot.sendMessage(db.leaders.zhbk.id, 'Вопрос: '+ctx.message.text+'\nЗадает vk.com/id'+ctx.message.from_id)
+        })
+        ctx.scene.leave();
     })
 
 bot.command(phrase.hellomk.matpom, async (ctx) => {
@@ -600,7 +622,22 @@ async (ctx) =>{
 }
 )
 
-const stage = new Stage(active, qai);
+const partnership = new Scene('partnership',
+async (ctx)=>{
+  ctx.scene.next();
+  await ctx.reply('Напишите ваше предложение: ')
+}, 
+  async (ctx )=>{
+  await ctx.reply('Ваше предложение будет рассмотрено в ближайшее время!', null, Markup
+  .keyboard([
+    [
+      Markup.button(phrase.start.to_start)
+    ]
+  ]))
+  ctx.scene.leave()
+})
+
+const stage = new Stage(active, qai, partnership, hostel);
 
 bot.use(session.middleware());
 bot.use(stage.middleware());
@@ -611,6 +648,14 @@ bot.command(phrase.hellomk.active, async (ctx) => {
 
 bot.command(phrase.hellomk.inst, async (ctx) => {
   await ctx.scene.enter('qai');
+})
+
+bot.command(phrase.hellomk.partnership, async (ctx)=>{
+  await ctx.scene.enter('partnership')
+})
+
+bot.command(phrase.hellomk.obsh, async (ctx)=>{
+  await ctx.scene.enter('hostel')
 })
 
 bot.on(async (ctx)=>{
