@@ -1,10 +1,11 @@
 const Scene = require('node-vk-bot-api/lib/scene');
 const Markup = require('node-vk-bot-api/lib/markup');
+const phrase = require("../phrases.json")
 
 module.exports = new Scene('qai', 
 async (ctx) => {
   ctx.scene.next();
-  await ctx.reply('С какого ты института?', null, Markup
+  await ctx.reply('С какого ты института?', 'photo139209737_457245265', Markup
       .keyboard([
         [
           Markup.button('ИТС', 'primary'),
@@ -72,7 +73,7 @@ async (ctx) => {
     default:
       {
         ctx.scene.leave();
-        await ctx.reply('Не понимаю тебя', null, Markup
+        await ctx.reply('Не понимаю тебя', 'photo182885071_457244090', Markup
         .keyboard([
           [
             Markup.button(phrase.start.to_start)
@@ -82,7 +83,7 @@ async (ctx) => {
       }
   }
   ctx.scene.next()
-  await ctx.reply('Что тебя интересует?', null, Markup
+  await ctx.reply('Что тебя интересует?', 'photo121545456_457264505', Markup
   .keyboard([
     [
       Markup.button(ctx.session.qai.questions.top1)
@@ -106,7 +107,7 @@ async (ctx) =>{
     case ctx.session.qai.questions.top1:
       {
         ctx.scene.leave();
-        ctx.reply(ctx.session.qai.answers.top1, null, Markup
+        ctx.reply(ctx.session.qai.answers.top1, 'photo182885071_457244092', Markup
           .keyboard([
             [
               Markup.button(phrase.start.to_start)
@@ -117,7 +118,7 @@ async (ctx) =>{
     case ctx.session.qai.questions.top2:
       {
         ctx.scene.leave();
-        ctx.reply(ctx.session.qai.answers.top2, null, Markup
+        ctx.reply(ctx.session.qai.answers.top2, 'photo182885071_457244092', Markup
           .keyboard([
             [
               Markup.button(phrase.start.to_start)
@@ -128,7 +129,7 @@ async (ctx) =>{
     case ctx.session.qai.questions.top3:
       {
         ctx.scene.leave();
-        ctx.reply(ctx.session.qai.answers.top3, null, Markup
+        ctx.reply(ctx.session.qai.answers.top3, 'photo182885071_457244092', Markup
           .keyboard([
             [
               Markup.button(phrase.start.to_start)
@@ -139,7 +140,7 @@ async (ctx) =>{
       case ctx.session.qai.questions.top4:
         {
           ctx.scene.leave();
-          ctx.reply(ctx.session.qai.answers.top4, null, Markup
+          ctx.reply(ctx.session.qai.answers.top4, 'photo182885071_457244092', Markup
             .keyboard([
               [
                 Markup.button(phrase.start.to_start)
@@ -150,7 +151,7 @@ async (ctx) =>{
         case ctx.session.qai.questions.top5:
           {
             ctx.scene.leave();
-            ctx.reply(ctx.session.qai.answers.top5, null, Markup
+            ctx.reply(ctx.session.qai.answers.top5, 'photo182885071_457244092', Markup
               .keyboard([
                 [
                   Markup.button(phrase.start.to_start)
@@ -161,7 +162,7 @@ async (ctx) =>{
         default:
           {
             ctx.scene.leave();
-            await ctx.reply('Не понимаю тебя', null, Markup
+            await ctx.reply('Не понимаю тебя', 'photo139209737_457245265', Markup
             .keyboard([
               [
                 Markup.button(phrase.start.to_start)

@@ -2,14 +2,21 @@ const VkBot = require('node-vk-bot-api');
 const Session = require('node-vk-bot-api/lib/session');
 const Stage = require('node-vk-bot-api/lib/stage');
 const Markup = require('node-vk-bot-api/lib/markup');
-const db = require("./db.json")
+const db = require('./helpers/database')
 const phrase = require("./phrases.json")
 const active = require("./scenes/active")
 const hostel = require("./scenes/hostel")
 const qai = require("./scenes/qai")
 const partnership = require('./scenes/partnership')
+
+/*TODO
+* Создать базу данных с фразами и данными председов
+* Написать db2json чтобы не переписывать все взаимодействие с базами данных
+* Написать админ-сцену
+* Попросить Марусю нарисовать картиночки для бота с Профиком
+*/
  
-const bot = new VkBot(db.TOKEN);
+const bot = new VkBot(db.getToken());
  
 bot.use(async (ctx, next) => {
   try {
@@ -24,7 +31,7 @@ bot.command(['Начать', phrase.start.to_start, phrase.start.anotherq], asyn
     if (ctx.message.text === phrase.start.to_start || ctx.message.text === phrase.start.anotherq){
       text = 'Чем я еще могу тебе помочь?'
     }
-    await ctx.reply(text, null, Markup
+    await ctx.reply(text, 'photo-195315622_457239024', Markup
     .keyboard([
       [
         Markup.button( phrase.hellomk.matpom, 'primary'),
@@ -53,7 +60,7 @@ bot.command(['Начать', phrase.start.to_start, phrase.start.anotherq], asyn
     });
 
 bot.command(phrase.hellomk.money, async (ctx) => {
-      await ctx.reply(phrase.ans.obsh, null, Markup
+      await ctx.reply(phrase.ans.obsh, 'photo502246455_457259789', Markup
       .keyboard([
         [
           Markup.button(phrase.money.when, 'positive'),
@@ -69,7 +76,7 @@ bot.command(phrase.hellomk.money, async (ctx) => {
     })
 
 bot.command(phrase.money.when, async (ctx) => {
-      await ctx.reply(phrase.moneyansw.when, null, Markup
+      await ctx.reply(phrase.moneyansw.when, 'photo89513085_457260817', Markup
       .keyboard([
         [
           Markup.button(phrase.start.anotherq, 'positive'),
@@ -91,7 +98,7 @@ bot.command(phrase.money.wait, async (ctx) => {
       text = phrase.moneyansw.wait_after
     }
   }
-      await ctx.reply(text, null, Markup
+      await ctx.reply(text, 'photo502246455_457259750', Markup
       .keyboard([
         [
           Markup.button(phrase.start.anotherq, 'positive'),
@@ -101,20 +108,20 @@ bot.command(phrase.money.wait, async (ctx) => {
     })
     
     bot.command(phrase.money.how_much, async (ctx) => {
-      await ctx.reply(phrase.moneyansw.how_much+db.leaders.kok.name+phrase.moneyansw.how_much2, null, Markup
+      await ctx.reply(phrase.moneyansw.how_much+db.getLeader('kok').name+phrase.moneyansw.how_much2, 'photo89513085_457260817', Markup
       .keyboard([
         [
           Markup.button(phrase.start.anotherq, 'positive'),
         ]
       ])
       .oneTime(true)).then(()=>{
-        bot.sendMessage(db.leaders.kok.id, 'vk.com/id'+ctx.message.from_id+' Вопрос: '+ctx.message.text)
+        bot.sendMessage(db.getLeader('kok').id, 'vk.com/id'+ctx.message.from_id+' Вопрос: '+ctx.message.text)
       })
     })   
 
 
 bot.command(phrase.hellomk.matpom, async (ctx) => {
-  await ctx.reply(phrase.ans.matpom, null, Markup
+  await ctx.reply(phrase.ans.matpom, 'photo216387443_457245611', Markup
   .keyboard([
     [
       Markup.button(phrase.start.anotherq, 'positive'),
@@ -124,7 +131,7 @@ bot.command(phrase.hellomk.matpom, async (ctx) => {
 })
 
 bot.command(phrase.hellomk.iwanttoprof, async (ctx) => {
-  await ctx.reply(phrase.ans.iwanttoprof, null, Markup
+  await ctx.reply(phrase.ans.iwanttoprof, 'photo502246455_457259744', Markup
   .keyboard([
     [
       Markup.button(phrase.start.anotherq, 'positive'),
@@ -134,7 +141,7 @@ bot.command(phrase.hellomk.iwanttoprof, async (ctx) => {
 })
 
 bot.command(phrase.hellomk.tonntu, async (ctx) => {
-  await ctx.reply(phrase.ans.tonntu, null, Markup
+  await ctx.reply(phrase.ans.tonntu, 'photo162045750_457250284', Markup
     .keyboard([
       [
         Markup.button(phrase.start.anotherq, 'positive'),
@@ -144,7 +151,7 @@ bot.command(phrase.hellomk.tonntu, async (ctx) => {
   })
 
 bot.command(phrase.hellomk.exchangeonnntu, async (ctx) => {
-  await ctx.reply(phrase.ans.exchangeonnntu, null, Markup
+  await ctx.reply(phrase.ans.exchangeonnntu, 'photo121545456_457254532', Markup
   .keyboard([
     [
       Markup.button(phrase.start.anotherq, 'positive'),
@@ -154,7 +161,7 @@ bot.command(phrase.hellomk.exchangeonnntu, async (ctx) => {
 })
 
 bot.command(phrase.hellomk.exchangeintonntu , async (ctx) => {
-  await ctx.reply(phrase.ans.exchangeintonntu, null, Markup
+  await ctx.reply(phrase.ans.exchangeintonntu, 'photo89513085_457257674', Markup
   .keyboard([
     [
       Markup.button(phrase.start.anotherq, 'positive'),
@@ -186,8 +193,12 @@ bot.command(phrase.hellomk.obsh, async (ctx)=>{
   await ctx.scene.enter('hostel')
 })
 
+bot.command(phrase.admin.start+db.getAdminKey(), async (ctx)=>{
+  await ctx.reply('You are admin!');
+})
+
 bot.on(async (ctx)=>{
-  await ctx.reply('Не понимаю тебя, попробуй еще раз?', null, Markup
+  await ctx.reply('Не понимаю тебя, попробуй еще раз?', 'photo121545456_457254277', Markup
   .keyboard([
     [
       Markup.button( phrase.hellomk.matpom, 'primary'),

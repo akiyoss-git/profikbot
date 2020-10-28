@@ -1,15 +1,15 @@
 const Scene = require('node-vk-bot-api/lib/scene');
 const Markup = require('node-vk-bot-api/lib/markup');
-const db = require("../db.json")
+const db = require('../helpers/database')
 const phrase = require("../phrases.json")
 const VkBot = require('node-vk-bot-api');
 
-const bot = new VkBot(db.TOKEN);
+const bot = new VkBot(db.getToken());
 
 module.exports = new Scene('active',
   async (ctx) => {
      ctx.scene.next();
-   await ctx.reply('Отлично! Что ты умеешь или в чем хочешь развиватся?', null, Markup
+   await ctx.reply('Отлично! Что ты умеешь или в чем хочешь развиватся?', 'photo-195315622_457239018', Markup
     .keyboard([
       [
         Markup.button('Снимать видосы', 'primary'),
@@ -36,7 +36,7 @@ module.exports = new Scene('active',
   async (ctx) => {
     if (ctx.message.text === 'Помогать своему институту'){
        ctx.scene.next();
-     await ctx.reply('С какого ты института?', null, Markup
+     await ctx.reply('С какого ты института?', 'photo121545456_457263822', Markup
       .keyboard([
         [
           Markup.button('ИТС', 'primary'),
@@ -67,13 +67,13 @@ module.exports = new Scene('active',
         case 'Дизайнить': 
         case 'Фотографировать':
           {
-         await ctx.reply('Отлично! С тобой свяжется руководитель информационно-аналитического отдела '+db.leaders.iao.name, null,  Markup
+         await ctx.reply('Отлично! С тобой свяжется руководитель информационно-аналитического отдела '+db.getLeader('iao').name, 'photo578210586_457240817',  Markup
           .keyboard([
             [
               Markup.button(phrase.start.anotherq),
             ]
           ])).then(()=>{
-            bot.sendMessage(db.leaders.iao.id, 'Кандидат: vk.com/id'+ctx.message.from_id+' Умеет или хочет: '+ctx.message.text);
+            bot.sendMessage(db.getLeader('iao').id, 'Кандидат: vk.com/id'+ctx.message.from_id+' Умеет или хочет: '+ctx.message.text);
           })
           
           ctx.scene.leave();
@@ -81,39 +81,26 @@ module.exports = new Scene('active',
           }
         case 'Устраивать крутейшие мероприятия':
           {
-            await ctx.reply('Отлично! С тобой свяжется председатель культурно-массового сектора '+db.leaders.kms.name, null, Markup
+            await ctx.reply('Отлично! С тобой свяжется председатель культурно-массового сектора '+db.getLeader('kms').name, 'photo121545456_457263939', Markup
             .keyboard([
               [
                 Markup.button(phrase.start.anotherq),
               ]
             ])).then(()=>{
-              bot.sendMessage(db.leaders.kms.id, 'Кандидат: vk.com/id'+ctx.message.from_id+' Умеет или хочет: '+ctx.message.text);
-            });
-            ctx.scene.leave();
-            break;
-          }
-        case 'Защищать студентов общаги от несправедливости':
-          {
-            await ctx.reply('Отлично! С тобой свяжется председатель жилично-бытовой комиссии '+db.leaders.zhbk.name, null, Markup
-            .keyboard([
-              [
-                Markup.button(phrase.start.anotherq),
-              ]
-            ])).then(()=>{
-              bot.sendMessage(db.leaders.zhbk.id, 'Кандидат: vk.com/id'+ctx.message.from_id+' Умеет или хочет: '+ctx.message.text);
+              bot.sendMessage(db.getLeader('kms').id, 'Кандидат: vk.com/id'+ctx.message.from_id+' Умеет или хочет: '+ctx.message.text);
             });
             ctx.scene.leave();
             break;
           }
         case 'Контроллировать крутотень обучения':
         {
-          await ctx.reply('Отлично! С тобой свяжется председатель комиссии общественного контроля '+db.leaders.kok.name, null, Markup
+          await ctx.reply('Отлично! С тобой свяжется председатель комиссии общественного контроля '+db.getLeader('kok').name, 'photo145483414_457241446', Markup
           .keyboard([
             [
               Markup.button(phrase.start.anotherq),
             ]
           ])).then(()=>{
-            bot.sendMessage(db.leaders.kok.id, 'Кандидат: vk.com/id'+ctx.message.from_id+' Умеет или хочет: '+ctx.message.text);
+            bot.sendMessage(db.getLeader('kok').id, 'Кандидат: vk.com/id'+ctx.message.from_id+' Умеет или хочет: '+ctx.message.text);
           });
           ctx.scene.leave();
           break;
@@ -121,19 +108,19 @@ module.exports = new Scene('active',
         }
         case 'Помогать общажникам':
           {
-            await ctx.reply('Отлично! С тобой свяжется председатель жилищно-бытовой комиссии '+db.leaders.zhbk.name, null, Markup
+            await ctx.reply('Отлично! С тобой свяжется председатель жилищно-бытовой комиссии '+db.getLeader('zhbk').name, 'photo139209737_457244935', Markup
             .keyboard([
               [
                 Markup.button(phrase.start.anotherq),
               ]
             ])).then(()=>{
-              bot.sendMessage(db.leaders.zhbk.id, 'Кандидат: vk.com/id'+ctx.message.from_id+' Умеет или хочет: '+ctx.message.text);
+              bot.sendMessage(db.getLeader('zhbk').id, 'Кандидат: vk.com/id'+ctx.message.from_id+' Умеет или хочет: '+ctx.message.text);
             });
             ctx.scene.leave();
             break;
           }
         default:
-          await ctx.reply('Не понимаю тебя, вернись в начало и попробуй еще раз', null, Markup
+          await ctx.reply('Не понимаю тебя, вернись в начало и попробуй еще раз', 'photo182885071_457244090', Markup
           .keyboard([
             [
               Markup.button(phrase.start.anotherq),
@@ -145,59 +132,51 @@ module.exports = new Scene('active',
     }
   },
   async (ctx) => {
-    let id = 0;
-    let name = '';
+    let leader;
     switch (ctx.message.text){
       case 'ИРИТ':
         {
-          id = db.leaders.irit.id;
-          name = db.leaders.irit.name;
+          leader = db.getLeader('irit');
           break;
         }
       case 'ИТС':
         {
-          id = db.leaders.its.id;
-          name = db.leaders.its.name;
+          leader = db.getLeader('its');
           break;
         }
       case 'ИНЭЛ':
         {
-          id = db.leaders.inel.id;
-          name = db.leaders.inel.name;
+          leader = db.getLeader('inel');
           break;
         }
       case 'ИНЭУ':
         {
-          id = db.leaders.ineu.id;
-          name = db.leaders.ineu.name;
+          leader = db.getLeader('ineu');
           break;
         }
       case 'ИФХТиМ':
         {
-          id = db.leaders.ifhtim.id;
-          name = db.leaders.ifhtim.name;
+          leader = db.getLeader('ifhtim');
           break;
         }
       case 'ИЯЭиТФ':
         {
-          id = db.leaders.iyaeitf.id;
-          name = db.leaders.iyaeitf.name;
+          leader = db.getLeader('iyaeitf');
           break;
         }
       case 'ИПТМ':
         {
-          id = db.leaders.iptm.id;
-          name = db.leaders.iptm.name;
+          leader = db.getLeader('iptm');
           break;
         }
     }
-   await ctx.reply('Отлично! С тобой свяжется председатель твоего профбюро '+name, null, Markup
+   await ctx.reply('Отлично! С тобой свяжется председатель твоего профбюро '+leader.name, 'photo473139889_457267765', Markup
    .keyboard([
      [
        Markup.button(phrase.start.anotherq),
      ]
    ])).then(()=>{
-      bot.sendMessage(id, 'Кандидат: vk.com/id'+ctx.message.from_id+' Хочет работать в профбюро');
+      bot.sendMessage(leader.id, 'Кандидат: vk.com/id'+ctx.message.from_id+' Хочет работать в профбюро');
     })
      ctx.scene.leave();
   });

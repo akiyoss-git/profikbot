@@ -11,7 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "mongodb": "^3.6.2",
+    "node-json-db": "^1.1.0",
     "node-vk-bot-api": "^3.3.7"
   }
-
 }
