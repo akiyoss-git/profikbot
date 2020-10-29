@@ -1,5 +1,4 @@
 
-db.json
 node_modules/.bin/semver
 node_modules/.bin/semver.cmd
 node_modules/.bin/semver.ps1
