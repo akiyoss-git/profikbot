@@ -8,14 +8,16 @@ const active = require("./scenes/active")
 const hostel = require("./scenes/hostel")
 const qai = require("./scenes/qai")
 const partnership = require('./scenes/partnership')
+const admin = require("./scenes/admin")
+const step = require("./scenes/step")
 
 /*TODO
-* Создать базу данных с фразами и данными председов
-* Написать db2json чтобы не переписывать все взаимодействие с базами данных
-* Написать админ-сцену
-* Попросить Марусю нарисовать картиночки для бота с Профиком
+* Создать базу данных с фразами и данными председов DONE
+* Написать db2json чтобы не переписывать все взаимодействие с базами данных DONE
+* Написать админ-сцену DONE 
+* Попросить Марусю нарисовать картиночки для бота с Профиком In Progress
 */
- 
+
 const bot = new VkBot(db.getToken());
  
 bot.use(async (ctx, next) => {
@@ -35,12 +37,12 @@ bot.command(['Начать', phrase.start.to_start, phrase.start.anotherq], asyn
     .keyboard([
       [
         Markup.button( phrase.hellomk.matpom, 'primary'),
-        Markup.button( phrase.hellomk.obsh, 'primary'),
+        Markup.button( phrase.hellomk.obsh[0], 'primary'),
         Markup.button( phrase.hellomk.money, 'primary'),
       ],
       [
         Markup.button( phrase.hellomk.inst, 'primary'),
-        Markup.button( phrase.hellomk.tonntu, 'primary'),
+        Markup.button( phrase.hellomk.tonntu[0], 'primary'),
       ],
       [
         Markup.button( phrase.hellomk.exchangeintonntu, 'primary'),
@@ -172,13 +174,17 @@ bot.command(phrase.hellomk.exchangeintonntu , async (ctx) => {
 
 const session = new Session();
 
-const stage = new Stage(active, qai, partnership, hostel);
+const stage = new Stage(active, qai, partnership, hostel, admin, step);
 
 bot.use(session.middleware());
 bot.use(stage.middleware());
 
 bot.command(phrase.hellomk.active, async (ctx) => {
   await ctx.scene.enter('active');
+});
+
+bot.command('step', async (ctx) => {
+  await ctx.scene.enter('steps');
 });
 
 bot.command(phrase.hellomk.inst, async (ctx) => {
@@ -189,12 +195,13 @@ bot.command(phrase.hellomk.partnership, async (ctx)=>{
   await ctx.scene.enter('partnership')
 })
 
-bot.command(phrase.hellomk.obsh, async (ctx)=>{
+bot.command(phrase.hellomk.obsh[0], async (ctx)=>{
+  console.log('here')
   await ctx.scene.enter('hostel')
 })
 
-bot.command(phrase.admin.start+db.getAdminKey(), async (ctx)=>{
-  await ctx.reply('You are admin!');
+bot.command(phrase.admin.start, async (ctx)=>{
+  await ctx.scene.enter('admin');
 })
 
 bot.on(async (ctx)=>{
@@ -202,12 +209,12 @@ bot.on(async (ctx)=>{
   .keyboard([
     [
       Markup.button( phrase.hellomk.matpom, 'primary'),
-      Markup.button( phrase.hellomk.obsh, 'primary'),
+      Markup.button( phrase.hellomk.obsh[0], 'primary'),
       Markup.button( phrase.hellomk.money, 'primary'),
     ],
     [
       Markup.button( phrase.hellomk.inst, 'primary'),
-      Markup.button( phrase.hellomk.tonntu, 'primary'),
+      Markup.button( phrase.hellomk.tonntu[0], 'primary'),
     ],
     [
       Markup.button( phrase.hellomk.exchangeintonntu, 'primary'),

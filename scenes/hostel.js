@@ -4,10 +4,11 @@ const db = require('../helpers/database')
 const phrase = require("../phrases.json")
 const VkBot = require('node-vk-bot-api');
 
-const bot = new VkBot(db.TOKEN);
+const bot = new VkBot(db.getToken());
 
 module.exports = new Scene('hostel', 
     async (ctx)=>{
+      console.log(ctx)
         ctx.scene.next();
         await ctx.reply(phrase.ans.obsh, 'photo502246455_457259789', Markup
             .keyboard([
@@ -29,16 +30,21 @@ module.exports = new Scene('hostel',
             .oneTime(true))
     },
     async (ctx)=>{
+      console.log(ctx)
         switch(ctx.message.text){
             case phrase.obsh.zasel:{
                 await ctx.reply(phrase.obshansw.zasel, 'photo502246455_457259767', Markup
                     .keyboard([
                       [
-                        Markup.button(phrase.start.anotherq, 'positive'),
-                      ]
+                        Markup.button('Я абитуриент', 'positive'),
+                      ],
+                      [
+                        Markup.button('Я уже студент', 'positive'),
+                      ],
                     ])
                     .oneTime(true))
-                ctx.scene.leave();
+                ctx.scene.next();
+                ctx.session.q='zasel';
                 break;
             }
             case phrase.obsh.dush:{
@@ -46,7 +52,10 @@ module.exports = new Scene('hostel',
                     .keyboard([
                       [
                         Markup.button(phrase.start.anotherq, 'positive'),
-                      ]
+                      ],
+                      [
+                        Markup.button(phrase.hellomk.obsh[1], 'positive'),
+                      ],
                     ])
                     .oneTime(true))
                 ctx.scene.leave();
@@ -57,18 +66,24 @@ module.exports = new Scene('hostel',
                     .keyboard([
                       [
                         Markup.button(phrase.start.anotherq, 'positive'),
-                      ]
+                      ],
+                      [
+                        Markup.button(phrase.hellomk.obsh[1], 'positive'),
+                      ],
                     ])
                     .oneTime(true))
                 ctx.scene.leave();
                 break;
             }
             case phrase.obsh.room:{
-                await ctx.reply(phrase.obshansw.room, 'photo502246455_457259787', Markup
+                await ctx.reply(phrase.obshansw.room+db.getLeader('zhbk').name+' vk.com/id'+db.getLeader('zhbk').id, 'photo502246455_457259787', Markup
                     .keyboard([
                       [
                         Markup.button(phrase.start.anotherq, 'positive'),
-                      ]
+                      ],
+                      [
+                        Markup.button(phrase.hellomk.obsh[1], 'positive'),
+                      ],
                     ])
                     .oneTime(true))
                 ctx.scene.leave();
@@ -76,6 +91,7 @@ module.exports = new Scene('hostel',
             }
             case 'Иной вопрос':{
                 await ctx.reply('Напишите свой вопрос', 'photo502246455_457256545')
+                ctx.session.q = 'anq';
                 ctx.scene.next();
                 break;
             }
@@ -87,14 +103,56 @@ module.exports = new Scene('hostel',
         }
     },
     async (ctx)=>{
-        ctx.reply('Для решения этого вопроса с тобой свяжется председатель жилищно-бытовой комиссии '+db.getLeader('zhbk').name, 'photo502246455_457259748', Markup
+      console.log(ctx)
+      switch(ctx.session.q){
+        case 'anq':{
+          await ctx.reply('Для решения этого вопроса с тобой свяжется председатель жилищно-бытовой комиссии '+db.getLeader('zhbk').name, 'photo502246455_457259748', Markup
         .keyboard([
           [
             Markup.button(phrase.start.anotherq, 'positive'),
-          ]
+          ],
+          [
+            Markup.button(phrase.hellomk.obsh[1], 'positive'),
+          ],
         ])
         .oneTime(true)).then(()=>{
             bot.sendMessage(db.getLeader('zhbk').id, 'Вопрос: '+ctx.message.text+'\nЗадает vk.com/id'+ctx.message.from_id)
         })
         ctx.scene.leave();
+        break;
+        }
+        case 'zasel':{
+          switch(ctx.message.text){
+            case 'Я абитуриент':{
+              await ctx.reply(phrase.obshansw.zasel_new, null, Markup
+                .keyboard([
+                  [
+                    Markup.button(phrase.start.anotherq, 'positive'),
+                  ],
+                  [
+                    Markup.button(phrase.hellomk.tonntu[1])
+                  ],
+                  [
+                    Markup.button(phrase.hellomk.obsh[1], 'positive'),
+                  ],
+                ])
+                .oneTime(true))
+                ctx.scene.leave();
+                break;
+            }
+            case 'Я уже студент':{
+              await ctx.reply(phrase.obshansw.zasel_old, null, Markup
+                .keyboard([
+                  [
+                    Markup.button(phrase.start.anotherq, 'positive'),
+                  ]
+                ])
+                .oneTime(true))
+                ctx.scene.leave(); 
+                break;
+            }
+          }
+        }
+      }
+
     })

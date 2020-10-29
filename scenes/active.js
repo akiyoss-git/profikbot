@@ -133,6 +133,7 @@ module.exports = new Scene('active',
   },
   async (ctx) => {
     let leader;
+    console.log(ctx.message.text)
     switch (ctx.message.text){
       case 'ИРИТ':
         {
