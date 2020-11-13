@@ -1,50 +1,50 @@
 {
-    "TOKEN": "d847617cb77669c9e9e4d4f1f3aaaa54139701198499251c1edd72a54f33697cb39f09ad63fe86b60ecaf",
+    "TOKEN": "TOKEN",
     "adminKey": "54321",
     "leaders": {
         "its": {
-            "id": 121545456,
-            "name": "Андрей Павлов"
+            "id": ID,
+            "name": "NAME"
         },
         "irit": {
-            "id": 121545456,
-            "name": "Анастасия Крюкова"
+            "id": ID,
+            "name": "NAME"
         },
         "iptm": {
-            "id": 121545456,
-            "name": "Иван Замураев"
+            "id": ID,
+            "name": "NAME"
         },
         "ifhtim": {
-            "id": 121545456,
-            "name": "Ксения Масланова"
+            "id": ID,
+            "name": "NAME"
         },
         "iyaeitf": {
-            "id": 121545456,
-            "name": "Владислав Фролов"
+            "id": ID,
+            "name": "NAME"
         },
         "inel": {
-            "id": 121545456,
-            "name": "Ксения Смирнова"
+            "id": ID,
+            "name": "NAME"
         },
         "ineu": {
-            "id": 121545456,
-            "name": "Эля Астафурова"
+            "id": ID,
+            "name": "NAME"
         },
         "kms": {
-            "id": 121545456,
-            "name": "Николай Коннов"
+            "id": ID,
+            "name": "NAME"
         },
         "iao": {
-            "id": 121545456,
-            "name": "Александр Юрченко"
+            "id": ID,
+            "name": "NAME"
         },
         "zhbk": {
-            "id": 121545456,
-            "name": "Андрей Щенников"
+            "id": ID,
+            "name": "NAME"
         },
         "kok": {
-            "id": 121545456,
-            "name": "Дмитрий Бредихин"
+            "id": ID,
+            "name": "NAME"
         }
     }
 }
