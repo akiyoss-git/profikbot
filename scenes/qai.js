@@ -1,11 +1,15 @@
 const Scene = require('node-vk-bot-api/lib/scene');
 const Markup = require('node-vk-bot-api/lib/markup');
 const phrase = require("../phrases.json")
+const db = require("../helpers/database")
+const VkBot = require('node-vk-bot-api');
+
+const bot = new VkBot(db.getToken());
 
 module.exports = new Scene('qai', 
 async (ctx) => {
   ctx.scene.next();
-  await ctx.reply('С какого ты института?', 'photo139209737_457245265', Markup
+  await ctx.reply('С какого ты института?', null, Markup
       .keyboard([
         [
           Markup.button('ИТС', 'primary'),
@@ -32,37 +36,37 @@ async (ctx) => {
   switch (ctx.message.text){
     case 'ИРИТ':
       {
-        ctx.session.qai = phrase.qai.irit
+        ctx.session.dep = 'irit'
         break;
       }
     case 'ИТС':
       {
-        ctx.session.qai = phrase.qai.its
+        ctx.session.dep = 'its'
         break;
       }
     case 'ИНЭЛ':
       {
-        ctx.session.qai = phrase.qai.inel
+        ctx.session.dep = 'inel'
         break;
       }
     case 'ИНЭУ':
       {
-        ctx.session.qai = phrase.qai.ineu
+        ctx.session.dep = 'ineu'
         break;
       }
     case 'ИФХТиМ':
       {
-        ctx.session.qai = phrase.qai.ifhtim
+        ctx.session.dep = 'ifhtim'
         break;
       }
     case 'ИЯЭиТФ':
       {
-        ctx.session.qai = phrase.qai.iyaeitf
+        ctx.session.dep = 'iyaeitf'
         break;
       }
     case 'ИПТМ':
       {
-        ctx.session.qai = phrase.qai.iptm
+        ctx.session.dep = 'iptm'
         break;
       }
     case phrase.start.to_start:
@@ -73,7 +77,7 @@ async (ctx) => {
     default:
       {
         ctx.scene.leave();
-        await ctx.reply('Не понимаю тебя', 'photo182885071_457244090', Markup
+        await ctx.reply('Не понимаю тебя', null, Markup
         .keyboard([
           [
             Markup.button(phrase.start.to_start)
@@ -83,93 +87,18 @@ async (ctx) => {
       }
   }
   ctx.scene.next()
-  await ctx.reply('Что тебя интересует?', 'photo121545456_457264505', Markup
-  .keyboard([
-    [
-      Markup.button(ctx.session.qai.questions.top1)
-    ],
-    [
-      Markup.button(ctx.session.qai.questions.top2)
-    ],
-    [
-      Markup.button(ctx.session.qai.questions.top3)
-    ],
-    [
-      Markup.button(ctx.session.qai.questions.top4)
-    ],
-    [
-      Markup.button(ctx.session.qai.questions.top5)
-    ]
-  ]))
+  await ctx.reply('Что тебя интересует?', null)
 },
 async (ctx) =>{
-  switch (ctx.message.text){
-    case ctx.session.qai.questions.top1:
-      {
-        ctx.scene.leave();
-        ctx.reply(ctx.session.qai.answers.top1, 'photo182885071_457244092', Markup
-          .keyboard([
-            [
-              Markup.button(phrase.start.to_start)
-            ]
-          ]))
-          break;
-      }
-    case ctx.session.qai.questions.top2:
-      {
-        ctx.scene.leave();
-        ctx.reply(ctx.session.qai.answers.top2, 'photo182885071_457244092', Markup
-          .keyboard([
-            [
-              Markup.button(phrase.start.to_start)
-            ]
-          ]))
-          break;
-      }
-    case ctx.session.qai.questions.top3:
-      {
-        ctx.scene.leave();
-        ctx.reply(ctx.session.qai.answers.top3, 'photo182885071_457244092', Markup
-          .keyboard([
-            [
-              Markup.button(phrase.start.to_start)
-            ]
-          ]))
-          break;
-      }
-      case ctx.session.qai.questions.top4:
-        {
-          ctx.scene.leave();
-          ctx.reply(ctx.session.qai.answers.top4, 'photo182885071_457244092', Markup
-            .keyboard([
-              [
-                Markup.button(phrase.start.to_start)
-              ]
-            ]))
-            break;
-        }
-        case ctx.session.qai.questions.top5:
-          {
-            ctx.scene.leave();
-            ctx.reply(ctx.session.qai.answers.top5, 'photo182885071_457244092', Markup
-              .keyboard([
-                [
-                  Markup.button(phrase.start.to_start)
-                ]
-              ]))
-              break;
-          }
-        default:
-          {
-            ctx.scene.leave();
-            await ctx.reply('Не понимаю тебя', 'photo139209737_457245265', Markup
-            .keyboard([
-              [
-                Markup.button(phrase.start.to_start)
-              ]
-            ]))
-            break;
-          }
-  }
+  ctx.scene.leave();
+  let leader = db.getLeader(ctx.session.dep);
+  await ctx.reply('Отлично! Тебе ответит '+leader.place+' [id'+leader.id+'|'+ leader.name+']', null, Markup
+    .keyboard([
+      [
+        Markup.button(phrase.start.to_start)
+      ]
+    ])).then(
+      bot.sendMessage(leader.id, 'Вопрос: '+ctx.message.text+'\nЗадает vk.com/id'+ctx.message.from_id)
+    )
 }
 )

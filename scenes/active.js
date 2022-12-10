@@ -9,7 +9,7 @@ const bot = new VkBot(db.getToken());
 module.exports = new Scene('active',
   async (ctx) => {
      ctx.scene.next();
-   await ctx.reply('Отлично! Что ты умеешь или в чем хочешь развиватся?', 'photo-195315622_457239018', Markup
+   await ctx.reply('Отлично! Что ты умеешь или в чем хочешь развиватся?', null, Markup
     .keyboard([
       [
         Markup.button('Снимать видосы', 'primary'),
@@ -36,7 +36,7 @@ module.exports = new Scene('active',
   async (ctx) => {
     if (ctx.message.text === 'Помогать своему институту'){
        ctx.scene.next();
-     await ctx.reply('С какого ты института?', 'photo121545456_457263822', Markup
+     await ctx.reply('С какого ты института?', null, Markup
       .keyboard([
         [
           Markup.button('ИТС', 'primary'),
@@ -67,7 +67,8 @@ module.exports = new Scene('active',
         case 'Дизайнить': 
         case 'Фотографировать':
           {
-         await ctx.reply('Отлично! С тобой свяжется руководитель информационно-аналитического отдела '+db.getLeader('iao').name, 'photo578210586_457240817',  Markup
+        leader = db.getLeader('iao')
+         await ctx.reply('Отлично! С тобой свяжется '+leader.place+' [id'+leader.id+'|'+ leader.name+']', null,  Markup
           .keyboard([
             [
               Markup.button(phrase.start.anotherq),
@@ -81,7 +82,8 @@ module.exports = new Scene('active',
           }
         case 'Устраивать крутейшие мероприятия':
           {
-            await ctx.reply('Отлично! С тобой свяжется председатель культурно-массового сектора '+db.getLeader('kms').name, 'photo121545456_457263939', Markup
+          leader = db.getLeader('kms')
+            await ctx.reply('Отлично! С тобой свяжется '+leader.place+' [id'+leader.id+'|'+ leader.name+']', null, Markup
             .keyboard([
               [
                 Markup.button(phrase.start.anotherq),
@@ -94,7 +96,8 @@ module.exports = new Scene('active',
           }
         case 'Контроллировать крутотень обучения':
         {
-          await ctx.reply('Отлично! С тобой свяжется председатель комиссии общественного контроля '+db.getLeader('kok').name, 'photo145483414_457241446', Markup
+          leader = db.getLeader('kok')
+          await ctx.reply('Отлично! С тобой свяжется '+leader.place+' [id'+leader.id+'|'+ leader.name+']', null, Markup
           .keyboard([
             [
               Markup.button(phrase.start.anotherq),
@@ -108,7 +111,8 @@ module.exports = new Scene('active',
         }
         case 'Помогать общажникам':
           {
-            await ctx.reply('Отлично! С тобой свяжется председатель жилищно-бытовой комиссии '+db.getLeader('zhbk').name, 'photo139209737_457244935', Markup
+            leader = db.getLeader('zhbk')
+            await ctx.reply('Отлично! С тобой свяжется '+leader.place+' [id'+leader.id+'|'+ leader.name+']', null, Markup
             .keyboard([
               [
                 Markup.button(phrase.start.anotherq),
@@ -120,7 +124,7 @@ module.exports = new Scene('active',
             break;
           }
         default:
-          await ctx.reply('Не понимаю тебя, вернись в начало и попробуй еще раз', 'photo182885071_457244090', Markup
+          await ctx.reply('Не понимаю тебя, вернись в начало и попробуй еще раз', null, Markup
           .keyboard([
             [
               Markup.button(phrase.start.anotherq),
@@ -171,7 +175,7 @@ module.exports = new Scene('active',
           break;
         }
     }
-   await ctx.reply('Отлично! С тобой свяжется председатель твоего профбюро '+leader.name, 'photo473139889_457267765', Markup
+   await ctx.reply('Отлично! С тобой свяжется '+leader.place+' [id'+leader.id+'|'+ leader.name+']', null, Markup
    .keyboard([
      [
        Markup.button(phrase.start.anotherq),

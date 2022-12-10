@@ -10,7 +10,7 @@ module.exports = new Scene('hostel',
     async (ctx)=>{
       console.log(ctx)
         ctx.scene.next();
-        await ctx.reply(phrase.ans.obsh, 'photo502246455_457259789', Markup
+        await ctx.reply(phrase.ans.obsh, null, Markup
             .keyboard([
               [
                 Markup.button(phrase.obsh.dush, 'positive'),
@@ -33,7 +33,7 @@ module.exports = new Scene('hostel',
       console.log(ctx)
         switch(ctx.message.text){
             case phrase.obsh.zasel:{
-                await ctx.reply(phrase.obshansw.zasel, 'photo502246455_457259767', Markup
+                await ctx.reply(phrase.obshansw.zasel, null, Markup
                     .keyboard([
                       [
                         Markup.button('Я абитуриент', 'positive'),
@@ -48,7 +48,7 @@ module.exports = new Scene('hostel',
                 break;
             }
             case phrase.obsh.dush:{
-                await ctx.reply(phrase.obshansw.dush, 'photo502246455_457259770', Markup
+                await ctx.reply(phrase.obshansw.dush, null, Markup
                     .keyboard([
                       [
                         Markup.button(phrase.start.anotherq, 'positive'),
@@ -62,7 +62,7 @@ module.exports = new Scene('hostel',
                 break;
             }
             case phrase.obsh.raspis:{
-                await ctx.reply(phrase.obshansw.raspis, 'photo502246455_457259771', Markup
+                await ctx.reply(phrase.obshansw.raspis, null, Markup
                     .keyboard([
                       [
                         Markup.button(phrase.start.anotherq, 'positive'),
@@ -76,7 +76,7 @@ module.exports = new Scene('hostel',
                 break;
             }
             case phrase.obsh.room:{
-                await ctx.reply(phrase.obshansw.room+db.getLeader('zhbk').name+' vk.com/id'+db.getLeader('zhbk').id, 'photo502246455_457259787', Markup
+                await ctx.reply(phrase.obshansw.room+db.getLeader('zhbk').name+' vk.com/id'+db.getLeader('zhbk').id, null, Markup
                     .keyboard([
                       [
                         Markup.button(phrase.start.anotherq, 'positive'),
@@ -106,7 +106,8 @@ module.exports = new Scene('hostel',
       console.log(ctx)
       switch(ctx.session.q){
         case 'anq':{
-          await ctx.reply('Для решения этого вопроса с тобой свяжется председатель жилищно-бытовой комиссии '+db.getLeader('zhbk').name, 'photo502246455_457259748', Markup
+          leader = db.getLeader('zhbk')
+          await ctx.reply('Для решения этого вопроса с тобой свяжется '+leader.place+' [id'+leader.id+'|'+ leader.name+']', null, Markup
         .keyboard([
           [
             Markup.button(phrase.start.anotherq, 'positive'),

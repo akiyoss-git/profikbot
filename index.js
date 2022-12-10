@@ -3,22 +3,31 @@ const Session = require('node-vk-bot-api/lib/session');
 const Stage = require('node-vk-bot-api/lib/stage');
 const Markup = require('node-vk-bot-api/lib/markup');
 const db = require('./helpers/database')
+const fs = require("fs");
 const phrase = require("./phrases.json")
 const active = require("./scenes/active")
 const hostel = require("./scenes/hostel")
 const qai = require("./scenes/qai")
 const partnership = require('./scenes/partnership')
 const admin = require("./scenes/admin")
+const anq = require("./scenes/anq")
 const step = require("./scenes/step")
-
-/*TODO
-* Создать базу данных с фразами и данными председов DONE
-* Написать db2json чтобы не переписывать все взаимодействие с базами данных DONE
-* Написать админ-сцену DONE 
-* Попросить Марусю нарисовать картиночки для бота с Профиком In Progress
-*/
+const activitys = require("./scenes/activity")
+const apiVK = require('node-vk-bot-api/lib/api')
+RandInt = (min, max) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive 
+}
 
 const bot = new VkBot(db.getToken());
+
+const inAction = (from_id) => {
+  if (db.getAction(from_id)){
+    return true
+  }
+  return false
+}
  
 bot.use(async (ctx, next) => {
   try {
@@ -28,41 +37,49 @@ bot.use(async (ctx, next) => {
   }
 });
 
-bot.command(['Начать', phrase.start.to_start, phrase.start.anotherq], async (ctx) => {
-  let text = 'Привет! Я Профик! Я могу ответить тебе на некоторые, интересующие тебя вопросы! Что тебя интересует?'
-    if (ctx.message.text === phrase.start.to_start || ctx.message.text === phrase.start.anotherq){
-      text = 'Чем я еще могу тебе помочь?'
-    }
-    await ctx.reply(text, 'photo-195315622_457239024', Markup
-    .keyboard([
-      [
-        Markup.button( phrase.hellomk.matpom, 'primary'),
-        Markup.button( phrase.hellomk.obsh[0], 'primary'),
-        Markup.button( phrase.hellomk.money, 'primary'),
-      ],
-      [
-        Markup.button( phrase.hellomk.inst, 'primary'),
-        Markup.button( phrase.hellomk.tonntu[0], 'primary'),
-      ],
-      [
-        Markup.button( phrase.hellomk.exchangeintonntu, 'primary'),
-        Markup.button( phrase.hellomk.exchangeonnntu, 'primary'),
-      ],
-      [
-        Markup.button( phrase.hellomk.active, 'positive'),
-      ],
-      [
-        Markup.button( phrase.hellomk.iwanttoprof, 'positive'),
-      ],
-      [
-        Markup.button(phrase.hellomk.partnership),
-      ]
-    ])
-    .oneTime(true));
-    });
+const mainMarkup = [
+  [
+    Markup.button( phrase.hellomk.matpom, 'primary'),
+    Markup.button( phrase.hellomk.obsh[0], 'primary'),
+    Markup.button( phrase.hellomk.money, 'primary'),
+  ],
+  [
+    Markup.button( phrase.hellomk.inst, 'primary'),
+    Markup.button( phrase.hellomk.tonntu[0], 'primary'),
+  ],
+  [
+    Markup.button( phrase.hellomk.exchangeintonntu, 'primary'),
+    Markup.button( phrase.hellomk.exchangeonnntu, 'primary'),
+  ],
+  [
+    Markup.button( phrase.hellomk.active, 'positive'),
+  ],
+  [
+    Markup.button( phrase.hellomk.iwanttoprof, 'positive'),
+    Markup.button( phrase.hellomk.uvol, 'positive'),
+    Markup.button( phrase.hellomk.anq, 'positive'),
+  ],
+  [
+    Markup.button(phrase.hellomk.partnership),
+  ]
+]
+
+bot.command(['Начать', 'Привет', 'Добрый день', phrase.start.to_start, phrase.start.anotherq, 'Start'], async (ctx) => {
+  db.deleteAction(ctx.message.from_id);
+  let text = phrase.hello[RandInt(0, phrase.hello.length-1)];
+  let img = 'photo620633475_457239019';
+  if (ctx.message.text === phrase.start.to_start || ctx.message.text === phrase.start.anotherq){
+    text = 'Чем я еще могу тебе помочь?';
+    img = null;
+  }
+  await ctx.reply(text, img, Markup
+  .keyboard(mainMarkup)
+  .oneTime(true));
+  });
 
 bot.command(phrase.hellomk.money, async (ctx) => {
-      await ctx.reply(phrase.ans.obsh, 'photo502246455_457259789', Markup
+  db.setAction(ctx.message.from_id);
+      await ctx.reply(phrase.ans.obsh, null, Markup
       .keyboard([
         [
           Markup.button(phrase.money.when, 'positive'),
@@ -77,17 +94,50 @@ bot.command(phrase.hellomk.money, async (ctx) => {
       .oneTime(true))
     })
 
-bot.command(phrase.money.when, async (ctx) => {
-      await ctx.reply(phrase.moneyansw.when, 'photo89513085_457260817', Markup
+bot.command(['спасибо','Благодарю'], async (ctx) => {
+      await ctx.reply(phrase.thx[RandInt(0, phrase.thx.length-1)], null, Markup
       .keyboard([
         [
           Markup.button(phrase.start.anotherq, 'positive'),
         ]
       ])
       .oneTime(true))
-    })    
+    })
+
+bot.command('пока', async (ctx) => {
+      await ctx.reply(phrase.bye[RandInt(0, phrase.bye.length-1)], null, Markup
+      .keyboard([
+        [
+          Markup.button(phrase.start.anotherq, 'positive'),
+        ]
+      ])
+      .oneTime(true))
+    })
+
+bot.command(phrase.money.when, async (ctx) => {
+  db.setAction(ctx.message.from_id);
+      await ctx.reply(phrase.moneyansw.when, null, Markup
+      .keyboard([
+        [
+          Markup.button(phrase.start.anotherq, 'positive'),
+        ]
+      ])
+      .oneTime(true))
+    })
+    
+bot.command(phrase.hellomk.uvol, async (ctx) => {
+  db.setAction(ctx.message.from_id);
+      await ctx.reply(phrase.ans.uvol, null, Markup
+      .keyboard([
+        [
+          Markup.button(phrase.start.anotherq, 'positive'),
+        ]
+      ])
+      .oneTime(true))
+    })  
 
 bot.command(phrase.money.wait, async (ctx) => {
+  db.setAction(ctx.message.from_id);
   let ms = Date.now();
   let date = new Date(ms);
   let text = "";
@@ -100,7 +150,7 @@ bot.command(phrase.money.wait, async (ctx) => {
       text = phrase.moneyansw.wait_after
     }
   }
-      await ctx.reply(text, 'photo502246455_457259750', Markup
+      await ctx.reply(text, null, Markup
       .keyboard([
         [
           Markup.button(phrase.start.anotherq, 'positive'),
@@ -110,20 +160,23 @@ bot.command(phrase.money.wait, async (ctx) => {
     })
     
     bot.command(phrase.money.how_much, async (ctx) => {
-      await ctx.reply(phrase.moneyansw.how_much+db.getLeader('kok').name+phrase.moneyansw.how_much2, 'photo89513085_457260817', Markup
+      db.setAction(ctx.message.from_id);
+      leader = db.getLeader('kok');
+      await ctx.reply(phrase.moneyansw.how_much+leader.place+' [id'+leader.id+'|'+ leader.name+']'+phrase.moneyansw.how_much2, null, Markup
       .keyboard([
         [
           Markup.button(phrase.start.anotherq, 'positive'),
         ]
       ])
       .oneTime(true)).then(()=>{
-        bot.sendMessage(db.getLeader('kok').id, 'vk.com/id'+ctx.message.from_id+' Вопрос: '+ctx.message.text)
+        bot.sendMessage(db.getLeader('kok').id, 'vk.com/id'+ctx.message.from_id+' Вопрос по размеру стипендии')
       })
     })   
 
 
 bot.command(phrase.hellomk.matpom, async (ctx) => {
-  await ctx.reply(phrase.ans.matpom, 'photo216387443_457245611', Markup
+  db.setAction(ctx.message.from_id);
+  await ctx.reply(phrase.ans.matpom, phrase.ans.matpom_wall, Markup
   .keyboard([
     [
       Markup.button(phrase.start.anotherq, 'positive'),
@@ -133,7 +186,8 @@ bot.command(phrase.hellomk.matpom, async (ctx) => {
 })
 
 bot.command(phrase.hellomk.iwanttoprof, async (ctx) => {
-  await ctx.reply(phrase.ans.iwanttoprof, 'photo502246455_457259744', Markup
+  db.setAction(ctx.message.from_id);
+  await ctx.reply(phrase.ans.iwanttoprof, null, Markup
   .keyboard([
     [
       Markup.button(phrase.start.anotherq, 'positive'),
@@ -143,7 +197,8 @@ bot.command(phrase.hellomk.iwanttoprof, async (ctx) => {
 })
 
 bot.command(phrase.hellomk.tonntu, async (ctx) => {
-  await ctx.reply(phrase.ans.tonntu, 'photo162045750_457250284', Markup
+  db.setAction(ctx.message.from_id);
+  await ctx.reply(phrase.ans.tonntu, null, Markup
     .keyboard([
       [
         Markup.button(phrase.start.anotherq, 'positive'),
@@ -153,7 +208,8 @@ bot.command(phrase.hellomk.tonntu, async (ctx) => {
   })
 
 bot.command(phrase.hellomk.exchangeonnntu, async (ctx) => {
-  await ctx.reply(phrase.ans.exchangeonnntu, 'photo121545456_457254532', Markup
+  db.setAction(ctx.message.from_id);
+  await ctx.reply(phrase.ans.exchangeonnntu, null, Markup
   .keyboard([
     [
       Markup.button(phrase.start.anotherq, 'positive'),
@@ -163,7 +219,8 @@ bot.command(phrase.hellomk.exchangeonnntu, async (ctx) => {
 })
 
 bot.command(phrase.hellomk.exchangeintonntu , async (ctx) => {
-  await ctx.reply(phrase.ans.exchangeintonntu, 'photo89513085_457257674', Markup
+  db.setAction(ctx.message.from_id);
+  await ctx.reply(phrase.ans.exchangeintonntu, null, Markup
   .keyboard([
     [
       Markup.button(phrase.start.anotherq, 'positive'),
@@ -174,29 +231,33 @@ bot.command(phrase.hellomk.exchangeintonntu , async (ctx) => {
 
 const session = new Session();
 
-const stage = new Stage(active, qai, partnership, hostel, admin, step);
+const stage = new Stage(active, qai, partnership, hostel, admin, step, activitys, anq);
 
 bot.use(session.middleware());
 bot.use(stage.middleware());
 
 bot.command(phrase.hellomk.active, async (ctx) => {
+  db.setAction(ctx.message.from_id);
   await ctx.scene.enter('active');
 });
 
-bot.command('step', async (ctx) => {
-  await ctx.scene.enter('steps');
-});
-
 bot.command(phrase.hellomk.inst, async (ctx) => {
+  db.setAction(ctx.message.from_id);
   await ctx.scene.enter('qai');
 })
 
+bot.command(phrase.hellomk.anq, async (ctx) => {
+  db.setAction(ctx.message.from_id);
+  await ctx.scene.enter('anq');
+})
+
 bot.command(phrase.hellomk.partnership, async (ctx)=>{
+  db.setAction(ctx.message.from_id);
   await ctx.scene.enter('partnership')
 })
 
 bot.command(phrase.hellomk.obsh[0], async (ctx)=>{
-  console.log('here')
+  db.setAction(ctx.message.from_id);
   await ctx.scene.enter('hostel')
 })
 
@@ -205,33 +266,39 @@ bot.command(phrase.admin.start, async (ctx)=>{
 })
 
 bot.on(async (ctx)=>{
-  await ctx.reply('Не понимаю тебя, попробуй еще раз?', 'photo121545456_457254277', Markup
-  .keyboard([
-    [
-      Markup.button( phrase.hellomk.matpom, 'primary'),
-      Markup.button( phrase.hellomk.obsh[0], 'primary'),
-      Markup.button( phrase.hellomk.money, 'primary'),
-    ],
-    [
-      Markup.button( phrase.hellomk.inst, 'primary'),
-      Markup.button( phrase.hellomk.tonntu[0], 'primary'),
-    ],
-    [
-      Markup.button( phrase.hellomk.exchangeintonntu, 'primary'),
-      Markup.button( phrase.hellomk.exchangeonnntu, 'primary'),
-    ],
-    [
-      Markup.button( phrase.hellomk.active, 'positive'),
-    ],
-    [
-      Markup.button( phrase.hellomk.iwanttoprof, 'positive'),
-    ],
-    [
-      Markup.button(phrase.hellomk.partnership),
-    ]
-  ])
-  .oneTime(true));
-  });
+  let msgtxt = ctx.message.text;
+  let att = ctx.message.attachments;
+  if (att != undefined){
+    let story = false
+    for(let i = 0; i < att.length; i++){
+      if (att[i].type == 'story'){
+        story = true;
+      }
+    }
+    if (story){
+    text = phrase.story[RandInt(0, phrase.story.length-1)]
+  }
+  }
+  let partner = msgtxt.indexOf('https://vk.com/wall') != -1 || msgtxt.indexOf('w=wall') != -1 || msgtxt.indexOf('разместить') != -1 || msgtxt.indexOf('опубликовать') != -1 || msgtxt.indexOf('пост') != -1 || msgtxt.indexOf('репост') != -1 || msgtxt.indexOf('конкурс') != -1 || msgtxt.indexOf('разместить') != -1;
+  if (partner){
+    text = 'Здравствуйте! Я передам ваше предложение!'
+  }
+  if (att || partner){
+    await ctx.reply(text, null, Markup
+  .keyboard(mainMarkup)
+  .oneTime(true)).then(
+    partner && bot.sendMessage(db.getLeader('iao').id, 'vk.com/id'+ctx.message.from_id+' Чекни сообщения группы, тут сотрудничество предлагают')
+  );
+  } else {
+    db.deleteAction(ctx.message.from_id);
+    let text = phrase.hello[RandInt(0, phrase.hello.length-1)];
+    let img = 'photo620633475_457239019';
+    await ctx.reply(text, img, Markup
+    .keyboard(mainMarkup)
+    .oneTime(true));
+  }
+});
+  
 
 bot.startPolling((err) => {
     if (err) {

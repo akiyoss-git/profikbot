@@ -21,6 +21,9 @@ async (ctx)=>{
                     Markup.button('Сменить ключ администратора')
                 ], 
                 [
+                    Markup.button('Изменить мероприятия')
+                ],
+                [
                     Markup.button('Выйти')
                 ]
             ])
@@ -74,6 +77,29 @@ async (ctx)=>{
             ctx.scene.next();
             await ctx.reply('[ADMIN] Введите новый ключ:')
             ctx.session.admin='ckey';
+            break;
+        }
+        case 'Изменить мероприятия':{
+            ctx.scene.next();
+            ctx.session.admin = 'cactiv'
+            let all = db.getAllActivitys()
+            let ans = '[ADMIN] Список мероприятий: \n'
+            for (let i = 0; i < all.length; i++) {
+                ans = ans + all[i].name + '\n';
+            }
+            ans = ans + '\n\nЧто необходимо сделать?'
+            await ctx.reply(ans, null, Markup
+                .keyboard([
+                    [
+                        Markup.button('Добавить мероприятие')
+                    ],
+                    [
+                        Markup.button('Удалить мероприятие')
+                    ],
+                    [
+                        Markup.button('Выйти')
+                    ]
+                ]))
             break;
         }
         default:{
@@ -157,37 +183,117 @@ async (ctx)=>{
             }
             ctx.scene.next();
             await ctx.reply('Введите имя председателя:')
+            break;
+        }
+        case 'cactiv':{
+            switch(ctx.message.text){
+                case 'Добавить мероприятие':{
+                    ctx.session.action = 'add'
+                    ctx.scene.next()
+                    await ctx.reply('Введите название мероприятия: ')
+                    break;
+                }
+                case 'Удалить мероприятие':{
+                    ctx.session.action = 'del'
+                    ctx.scene.next()
+                    await ctx.reply('Введите название мероприятия: ')
+                    break;
+                }
+                case 'Выйти':{
+                    ctx.scene.leave()
+                    await ctx.reply('Выход из админ-панели', null, Markup
+                    .keyboard([
+                        [
+                            Markup.button(phrases.start.to_start)
+                        ]
+                    ]).oneTime(true))
+                    break;
+                }
+                default:{
+                    ctx.scene.leave()
+                    await ctx.reply('Не могу понять, начните заново', null, Markup
+                    .keyboard([
+                        [
+                            Markup.button(phrases.start.to_start)
+                        ]
+                    ]).oneTime(true))
+                    break;
+                }
+            }
+    }
+    }
+
+},
+async (ctx)=>{
+    switch(ctx.session.admin){
+        case 'cleader':{
+            ctx.scene.next()
+            ctx.session.name=ctx.message.text;
+            await ctx.reply('Имя: '+ctx.message.text+'\nВсе верно?', null, Markup
+            .keyboard([
+                [
+                    Markup.button('Да', 'positive')
+                ],
+                [
+                    Markup.button('Нет', 'negative')
+                ]
+            ]).oneTime(true))
+            break;
+        }
+        case 'cactiv':{
+            switch(ctx.session.action){
+                case 'add':{
+                    ctx.scene.next()
+                    ctx.session.actname = ctx.message.text
+                    await ctx.reply('Добавьте описание: ')
+                    break;
+                }
+                case 'del':{
+                    ctx.scene.leave()
+                    let res = db.deleteActivity(ctx.message.text)
+                    await ctx.reply(res, null, Markup
+                        .keyboard([
+                            [
+                                Markup.button(phrases.start.to_start)
+                            ]
+                    ]).oneTime(true))
+                    break;
+                }
+            }
         }
     }
 },
 async (ctx)=>{
-    ctx.scene.next()
-    ctx.session.name=ctx.message.text;
-    await ctx.reply('Имя: '+ctx.message.text+'\nВсе верно?', null, Markup
-    .keyboard([
-        [
-            Markup.button('Да', 'positive')
-        ],
-        [
-            Markup.button('Нет', 'negative')
-        ]
-    ]).oneTime(true))
-},
-async (ctx)=>{
-    switch(ctx.message.text){
-        case 'Да':{
-            await ctx.reply('Введите id страницы');
-            ctx.scene.next()
+    switch(ctx.session.admin){
+        case 'cleader':{
+            switch(ctx.message.text){
+                case 'Да':{
+                    await ctx.reply('Введите id страницы');
+                    ctx.scene.next()
+                    break;
+                }
+                default:{
+                    ctx.scene.leave();
+                    await ctx.reply('Попробуйте с начала', null, Markup
+                    .keyboard([
+                        [
+                            Markup.button(phrases.start.to_start)
+                        ]
+                    ]))
+                    break;
+                }       
+            }
             break;
         }
-        default:{
-            ctx.scene.leave();
-            await ctx.reply('Попробуйте с начала', null, Markup
-            .keyboard([
-                [
-                    Markup.button(phrases.start.to_start)
-                ]
-            ]))
+        case 'cactiv':{
+            ctx.scene.leave()
+            res = db.addActivity(ctx.session.actname, ctx.message.text)
+            await ctx.reply(res, null, Markup
+                .keyboard([
+                    [
+                        Markup.button(phrases.start.to_start)
+                    ]
+            ]).oneTime(true))
             break;
         }
     }
@@ -208,13 +314,45 @@ async (ctx)=>{
 async (ctx)=>{
     switch(ctx.message.text){
         case 'Да':{
-            await ctx.reply('Председеталь изменен на '+ctx.session.name+'\nvk.com/id'+ctx.session.id, null, Markup
+            await ctx.reply('Введите должность');
+            ctx.scene.next()
+            break;
+        }
+        default:{
+            ctx.scene.leave();
+            await ctx.reply('Попробуйте с начала', null, Markup
+            .keyboard([
+                [
+                    Markup.button(phrases.start.to_start)
+                ]
+            ]))
+            break;
+        }
+    }
+},
+async (ctx)=>{
+    ctx.scene.next()
+    ctx.session.place=ctx.message.text;
+    await ctx.reply('Должность: '+ctx.message.text+'\nВсе верно?', null, Markup
+    .keyboard([
+        [
+            Markup.button('Да', 'positive')
+        ],
+        [
+            Markup.button('Нет', 'negative')
+        ]
+    ]).oneTime(true))
+},
+async (ctx)=>{
+    switch(ctx.message.text){
+        case 'Да':{
+            await ctx.reply('Председеталь изменен на '+ctx.session.name+'\nvk.com/id'+ctx.session.id+'\n'+ctx.session.place, null, Markup
             .keyboard([
                 [
                     Markup.button(phrases.start.to_start)
                 ]                
             ]).oneTime(true)).then(()=>{
-                db.setLeader(ctx.session.lfrom, ctx.session.name, ctx.session.id);
+                db.setLeader(ctx.session.lfrom, ctx.session.name, ctx.session.id, ctx.session.place);
             });
             ctx.scene.leave()
             break;
